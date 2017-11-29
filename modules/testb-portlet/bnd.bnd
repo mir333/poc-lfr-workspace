@@ -1,0 +1,4 @@
+Bundle-Name: testb-portlet
+Bundle-SymbolicName: im.ligas.ipc.test.portletb
+Bundle-Version: 1.0.0
+Export-Package: im.ligas.ipc.test.portletb.constants}
