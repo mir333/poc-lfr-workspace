@@ -1,0 +1,4 @@
+Bundle-Name: search-test-portlet
+Bundle-SymbolicName: im.ligas.sample.searchtest
+Bundle-Version: 1.0.0
+Export-Package: im.ligas.sample.searchtest.constants
