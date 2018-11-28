@@ -1,0 +1,4 @@
+Bundle-Name: ddl-file-type
+Bundle-SymbolicName: ddl.file.type
+Bundle-Version: 1.0.0
+Fragment-Host: com.liferay.dynamic.data.lists.form.web;bundle-version="2.0.21"

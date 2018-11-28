@@ -1,0 +1,3 @@
+Bundle-Name: custom-ddl-file-hook
+Bundle-SymbolicName: coms.hays.ddl.file.type
+Bundle-Version: 1.0.0
