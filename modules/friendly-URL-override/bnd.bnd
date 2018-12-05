@@ -1,0 +1,5 @@
+Bundle-Description: Extends the friendly URL generation
+Bundle-SymbolicName: im.ligas.friendlyurl.jsp.override
+Bundle-Version: 1.0.0
+Fragment-Host: com.liferay.layout.admin.web;bundle-version="1.0.75"
+-sources: true
