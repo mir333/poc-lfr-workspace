@@ -1,0 +1,8 @@
+Bundle-Name: form-js-override
+Bundle-SymbolicName: im.ligas.js.override
+Bundle-Version: 1.0.0
+Export-Package: im.ligas.js.override.constants
+
+Liferay-JS-Config: /META-INF/resources/js/config.js
+
+Web-ContextPath: /my-dynamic-data-mapping-form-renderer
