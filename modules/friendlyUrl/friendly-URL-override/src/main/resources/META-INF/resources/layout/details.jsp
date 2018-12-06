@@ -1,4 +1,5 @@
-<%@ page import="com.liferay.portal.kernel.model.Group" %><%--
+<%@ page import="java.util.Collections" %>
+<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -51,15 +52,6 @@ StringBuilder friendlyURLBase = new StringBuilder();
 	if (Validator.isNull(virtualHostname) || (friendlyURLBase.indexOf(virtualHostname) == -1)) {
 		friendlyURLBase.append(group.getPathFriendlyURL(layoutsAdminDisplayContext.isPrivateLayout(), themeDisplay));
 		friendlyURLBase.append(group.getFriendlyURL());
-		/* START */
-		/* Changed griendly URL generation */
-		List<Group> ancestors = group.getAncestors();
-		if(ancestors!=null){
-			for (Group ancestor : ancestors) {
-				friendlyURLBase.append(ancestor.getFriendlyURL());
-			}
-		}
-		/* END*/
 	}
 	%>
 
@@ -110,18 +102,30 @@ StringBuilder friendlyURLBase = new StringBuilder();
 			<c:when test="<%= selLayoutType.isURLFriendliable() %>">
 				<div class="form-group">
 					<label for="<portlet:namespace />friendlyURL"><liferay-ui:message key="friendly-url" /> <liferay-ui:icon-help message='<%= LanguageUtil.format(request, "for-example-x", "<em>/news</em>", false) %>' /></label>
-
 					<div class="input-group lfr-friendly-url-input-group">
 						<span class="input-group-addon" id="<portlet:namespace />urlBase">
 							<span class="input-group-constrain"><liferay-ui:message key="<%= StringUtil.shorten(friendlyURLBase.toString(), 40) %>" /></span>
 						</span>
 
-						<liferay-ui:input-localized
-							cssClass="form-control"
-							defaultLanguageId="<%= LocaleUtil.toLanguageId(themeDisplay.getSiteDefaultLocale()) %>"
-							name="friendlyURL"
-							xml="<%= HttpUtil.decodeURL(selLayout.getFriendlyURLsXML()) %>"
-						/>
+
+                            <%-- START --%>
+                            <%-- Changed griendly URL generation --%>
+                        <%
+                            String pre = StringPool.BLANK;
+                            List<Layout> ancestors = selLayout.getAncestors();
+                            Collections.reverse(ancestors);
+                            StringBuilder prefix = new StringBuilder();
+                            if (ancestors != null) {
+                                for (Layout ancestor : ancestors) {
+                                    prefix.append(ancestor.getFriendlyURL());
+                                }
+                                pre = prefix.toString();
+                            }
+                            String fURL = pre + selLayout.getFriendlyURL();
+                        %>
+                        <%=fURL%>
+                        <aui:input name="friendlyURL" label=" " type="text"  value="<%= "asd" %>" />
+                            <%-- END --%>
 					</div>
 				</div>
 			</c:when>
