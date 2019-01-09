@@ -4,7 +4,12 @@
 	<b><liferay-ui:message key="searchtest.caption"/></b>
 
 	<hr/>
-	<c:forEach items="${data}" var="item">
+	<c:forEach items="${data1}" var="item">
+		${item}<br/>
+	</c:forEach>
+	<hr/>
+	<hr/>
+	<c:forEach items="${data2}" var="item">
 		${item}<br/>
 	</c:forEach>
 </div>
