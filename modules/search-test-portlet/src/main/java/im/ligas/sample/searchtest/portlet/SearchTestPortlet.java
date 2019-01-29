@@ -5,7 +5,6 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.*;
-import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -21,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author ligasm
@@ -33,7 +31,7 @@ import java.util.Set;
                 "com.liferay.portlet.instanceable=true",
                 "javax.portlet.init-param.template-path=/",
                 "javax.portlet.init-param.view-template=/view.jsp",
-                "javax.portlet.name=" + SearchTestPortletKeys.SearchTest,
+                "javax.portlet.name=" + SearchTestPortletKeys.SEARCH_TEST,
                 "javax.portlet.resource-bundle=content.Language",
                 "javax.portlet.security-role-ref=power-user,user"
         },
