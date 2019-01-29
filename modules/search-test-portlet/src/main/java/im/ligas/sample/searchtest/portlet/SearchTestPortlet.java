@@ -87,9 +87,9 @@ public class SearchTestPortlet extends MVCPortlet {
 
         //manually set values for testing
         long structureId = 918493;
-        String searchTerm = "aaaaaaaaaa";
+        String searchTerm = "xxxx zzzz";
         String structureField = "testFieldForSearch";
-        String categoryName = "zxcv";
+        String categoryName = "ccc ddd";
         String fieldName = ddmIndexer.encodeName(structureId, structureField, themeDisplay.getLocale());
 
         try {
@@ -113,6 +113,7 @@ public class SearchTestPortlet extends MVCPortlet {
             booleanQuery.addRequiredTerm(Field.ENTRY_CLASS_NAME, JournalArticle.class.getName());
             booleanQuery.addRequiredTerm(Field.SCOPE_GROUP_ID, String.valueOf(themeDisplay.getScopeGroupId()));
             booleanQuery.addRequiredTerm(Field.ASSET_CATEGORY_TITLES, categoryName);
+            booleanQuery.addRequiredTerm("latest", true);
 
             booleanQuery.addRequiredTerm(fieldName, searchTerm);
             Hits search = indexSearcherHelper.search(searchContext, booleanQuery);
@@ -169,6 +170,7 @@ public class SearchTestPortlet extends MVCPortlet {
             queryConfig.setScoreEnabled(false);
 
             BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(searchContext);
+            booleanQuery.addRequiredTerm("latest", true);
 
             GroupBy groupBy = new GroupBy(fieldName);
             groupBy.setSize(30);
