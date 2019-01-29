@@ -5,6 +5,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.*;
+import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -19,6 +20,8 @@ import javax.portlet.RenderResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author ligasm
@@ -43,10 +46,14 @@ public class SearchTestPortlet extends MVCPortlet {
     @Reference
     private DDMIndexer ddmIndexer;
 
+    @Reference
+    private IndexSearcherHelper indexSearcherHelper;
+
     @Override
     public void doView(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
+        ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
         try {
-            ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
             boolean sorting = ParamUtil.getBoolean(renderRequest, "sorting", false);
             SearchContext searchContext = new SearchContext();
             searchContext.setCompanyId(themeDisplay.getCompanyId());
@@ -64,7 +71,7 @@ public class SearchTestPortlet extends MVCPortlet {
 
             BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(searchContext);
             booleanQuery.addTerm(Field.ENTRY_CLASS_NAME, User.class.getName());
-            Hits search = IndexSearcherHelperUtil.search(searchContext, booleanQuery);
+            Hits search = indexSearcherHelper.search(searchContext, booleanQuery);
 
             List<String> data = new ArrayList<>();
 
@@ -83,11 +90,12 @@ public class SearchTestPortlet extends MVCPortlet {
         //manually set values for testing
         long structureId = 918493;
         String searchTerm = "aaaaaaaaaa";
-        String structureField = "Text4n8h";
+        String structureField = "testFieldForSearch";
         String categoryName = "zxcv";
+        String fieldName = ddmIndexer.encodeName(structureId, structureField, themeDisplay.getLocale());
 
         try {
-            ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
             boolean sorting = ParamUtil.getBoolean(renderRequest, "sorting", false);
             SearchContext searchContext = new SearchContext();
             searchContext.setCompanyId(themeDisplay.getCompanyId());
@@ -107,9 +115,9 @@ public class SearchTestPortlet extends MVCPortlet {
             booleanQuery.addRequiredTerm(Field.ENTRY_CLASS_NAME, JournalArticle.class.getName());
             booleanQuery.addRequiredTerm(Field.SCOPE_GROUP_ID, String.valueOf(themeDisplay.getScopeGroupId()));
             booleanQuery.addRequiredTerm(Field.ASSET_CATEGORY_TITLES, categoryName);
-            String fieldName = ddmIndexer.encodeName(structureId, structureField, themeDisplay.getLocale());
+
             booleanQuery.addRequiredTerm(fieldName, searchTerm);
-            Hits search = IndexSearcherHelperUtil.search(searchContext, booleanQuery);
+            Hits search = indexSearcherHelper.search(searchContext, booleanQuery);
 
             List<String> data = new ArrayList<>();
 
@@ -121,6 +129,61 @@ public class SearchTestPortlet extends MVCPortlet {
 
             }
             renderRequest.setAttribute("data2", data);
+        } catch (SearchException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            SearchContext searchContext = new SearchContext();
+            searchContext.setCompanyId(themeDisplay.getCompanyId());
+
+
+            QueryConfig queryConfig = searchContext.getQueryConfig();
+            queryConfig.setHighlightEnabled(false);
+            queryConfig.setScoreEnabled(false);
+
+            BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(searchContext);
+
+            GroupBy groupBy = new GroupBy(Field.ENTRY_CLASS_NAME);
+            groupBy.setSize(30);
+            searchContext.setGroupBy(groupBy);
+
+            Hits search = indexSearcherHelper.search(searchContext, booleanQuery);
+
+            List<String> data = new ArrayList<>();
+            for (Map.Entry<String, Hits> entry : search.getGroupedHits().entrySet()) {
+                String sb = entry.getKey() + " " + entry.getValue().getLength();
+                data.add(sb);
+            }
+            renderRequest.setAttribute("data3", data);
+        } catch (SearchException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            SearchContext searchContext = new SearchContext();
+            searchContext.setCompanyId(themeDisplay.getCompanyId());
+
+            QueryConfig queryConfig = searchContext.getQueryConfig();
+            queryConfig.setHighlightEnabled(false);
+            queryConfig.setScoreEnabled(false);
+
+            BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(searchContext);
+
+            GroupBy groupBy = new GroupBy(fieldName);
+            groupBy.setSize(30);
+            searchContext.setGroupBy(groupBy);
+
+            Hits search = indexSearcherHelper.search(searchContext, booleanQuery);
+
+            List<String> data = new ArrayList<>();
+            for (Map.Entry<String, Hits> entry : search.getGroupedHits().entrySet()) {
+                String sb = entry.getKey() + " " + entry.getValue().getLength();
+                data.add(sb);
+            }
+            renderRequest.setAttribute("data4", data);
         } catch (SearchException e) {
             e.printStackTrace();
         }
