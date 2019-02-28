@@ -188,6 +188,31 @@ public class SearchTestPortlet extends MVCPortlet {
             e.printStackTrace();
         }
 
+
+        try {
+            SearchContext searchContext = new SearchContext();
+            searchContext.setCompanyId(themeDisplay.getCompanyId());
+
+            BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(searchContext);
+            booleanQuery.addRequiredTerm(Field.ENTRY_CLASS_NAME, User.class.getName());
+            booleanQuery.addRequiredTerm("lastName", "t", true);
+
+            Hits search = indexSearcherHelper.search(searchContext, booleanQuery);
+
+            List<String> data = new ArrayList<>();
+
+            for (Document doc : search.getDocs()) {
+
+                String sb = doc.get(themeDisplay.getLocale(), Field.TITLE) + " " +
+                        doc.get(Field.USER_NAME);
+                data.add(sb);
+
+            }
+            renderRequest.setAttribute("data5", data);
+        } catch (SearchException e) {
+            e.printStackTrace();
+        }
+
         super.doView(renderRequest, renderResponse);
     }
 }
