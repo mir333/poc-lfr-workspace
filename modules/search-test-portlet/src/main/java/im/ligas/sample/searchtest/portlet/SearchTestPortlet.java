@@ -5,6 +5,8 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.search.*;
+import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
+import com.liferay.portal.kernel.search.generic.TermRangeQueryImpl;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -195,7 +197,7 @@ public class SearchTestPortlet extends MVCPortlet {
 
             BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(searchContext);
             booleanQuery.addRequiredTerm(Field.ENTRY_CLASS_NAME, User.class.getName());
-            booleanQuery.addRequiredTerm("lastName", "t", true);
+            booleanQuery.addRequiredTerm("lastName", "jay", true);
 
             Hits search = indexSearcherHelper.search(searchContext, booleanQuery);
 
@@ -210,6 +212,36 @@ public class SearchTestPortlet extends MVCPortlet {
             }
             renderRequest.setAttribute("data5", data);
         } catch (SearchException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            SearchContext searchContext = new SearchContext();
+            searchContext.setCompanyId(themeDisplay.getCompanyId());
+
+            TermRangeQuery rangeQuery1 = new TermRangeQueryImpl("priority", "10", null, false, false);
+            TermRangeQuery rangeQuery2 = new TermRangeQueryImpl("version", null, "1.1", false, true);
+
+            BooleanQuery booleanQuery = new BooleanQueryImpl();
+            booleanQuery.addRequiredTerm(Field.ENTRY_CLASS_NAME, JournalArticle.class.getName());
+            booleanQuery.add(rangeQuery1,BooleanClauseOccur.MUST);
+            booleanQuery.add(rangeQuery2,BooleanClauseOccur.MUST);
+//            booleanQuery.addRangeTerm("version", null, "1.1"); --> this would add just a should statement and the border values would be included by default
+
+            Hits search = indexSearcherHelper.search(searchContext, booleanQuery);
+
+            List<String> data = new ArrayList<>();
+
+            for (Document doc : search.getDocs()) {
+
+                String sb = doc.get(themeDisplay.getLocale(), Field.TITLE) + " " +
+                        doc.get(Field.PRIORITY) + " " +
+                        doc.get(Field.VERSION);
+                data.add(sb);
+
+            }
+            renderRequest.setAttribute("data6", data);
+        } catch (SearchException | ParseException e) {
             e.printStackTrace();
         }
 

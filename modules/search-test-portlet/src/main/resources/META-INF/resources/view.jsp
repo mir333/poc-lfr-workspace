@@ -30,6 +30,11 @@
 	<c:forEach items="${data5}" var="item">
 		${item}<br/>
 	</c:forEach>
+	<hr/>
+
+	<c:forEach items="${data6}" var="item">
+		${item}<br/>
+	</c:forEach>
 </div>
 <div>
 	<portlet:renderURL var="up">
