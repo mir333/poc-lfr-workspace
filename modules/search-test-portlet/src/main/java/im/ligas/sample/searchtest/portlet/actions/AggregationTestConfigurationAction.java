@@ -7,7 +7,10 @@ import org.osgi.service.component.annotations.Component;
 
 @Component(
         immediate = true,
-        property = "javax.portlet.name=" + SearchTestPortletKeys.AGGREGATION_TEST,
+        property = {
+                "javax.portlet.name=" + SearchTestPortletKeys.AGGREGATION_TEST,
+                "javax.portlet.name=" + SearchTestPortletKeys.RANGE_TEST
+        },
         service = ConfigurationAction.class
 )
 public class AggregationTestConfigurationAction extends DefaultConfigurationAction {
